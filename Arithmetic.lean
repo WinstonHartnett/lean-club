@@ -1,82 +1,101 @@
-import Arithmetic.definition
+open Nat
 
-open Nat_
+-- Nat definition
+-- Enclosed in namespace to avoid polluting main namespace
+namespace defs
+  inductive nat : Type
+    | zero : nat
+    | succ : nat -> nat
 
-theorem add_zero (m : Nat_) : m + zero = m := rfl
+  /- Note that addition and multiplication recurse on the second argument.
+    This is the way that Lean defines addition; it could just as easily
+    have chosen the other direction. This just means we usually apply
+    induction on the second variable. -/
+  def add (m n : Nat) : Nat :=
+    match n with
+    | zero   => m
+    | succ n => succ (add m n)
 
-@[simp]
-theorem add_succ (m n : Nat_) : m + succ n = succ (m + n) := rfl
+  def mul (m n : Nat) : Nat :=
+    match n with
+    | zero   => zero
+    | succ n => add (mul m n) n
+end defs
 
-theorem zero_add (m : Nat_) : zero + m = m := by
+theorem succ_not_zero : forall (n: Nat), succ n = 0 -> false := by
+  intros n hyp
+  injection hyp /- the injection tactic exploits the fact that
+    constructors of an inductive type are injective,
+    so succ n = 0 immediately solves any goal. -/
+
+theorem _add_zero : forall (n: Nat), n + 0 = n := by
+  intro n; rfl
+
+theorem _add_succ : forall (n m: Nat), n + succ m = succ (n + m) := by
+  intro n m; rfl
+
+theorem _zero_add : forall (n: Nat), 0 + n = n := by
+  intro n; induction n with
+  | zero => rfl
+  | succ n ih_n =>
+      rw [_add_succ]
+      rw [ih_n]
+
+theorem _succ_add : forall (n m: Nat), succ n + m = succ (n + m) := by
+  intro n m
   induction m with
   | zero => rfl
-  | succ m hyp => 
-    rw [add_succ]
-    rw [hyp]
+  | succ m hyp =>
+      rw [_add_succ]
+      rw [_add_succ, hyp]
 
-@[simp]
-theorem succ_add (m n : Nat_) : succ m + n = succ (m + n) := by
-  induction n with
-  | zero => 
-    rfl
-  | succ n hyp =>
-    rw [add_succ]
-    rw [hyp]
-    rw [←add_succ]
+theorem _add_comm : forall (n m: Nat), n + m = m + n := by
+  intro n; induction n with
+  | zero =>
+      intro m
+      rw [_zero_add]
+      rfl
+  | succ n ih_n => 
+      intro m
+      rw [_succ_add]
+      rw [_add_succ]
+      rw [ih_n]
 
-@[simp]
-theorem add_comm (m n : Nat_) : m + n = n + m := by
-  induction n with
-  | zero => 
-    rw [zero_add]
-    rfl
-  | succ n hyp =>
-    rw [succ_add]
-    rw [add_succ] 
-    rw [hyp]
-    
-@[simp]
-theorem add_assoc (l m n : Nat_) : (l + m) + n = l + (m + n) := by
-  induction n with
-  | zero => 
-    rw [add_zero]
-    rw [add_zero]
-  | succ n hyp => 
-    rw [add_succ]
-    rw [add_succ]
-    rw [add_succ]
-    rw [hyp]
-
-theorem mul_succ (m n : Nat_) : m * (succ n) = m + m * n := rfl
-
-theorem zero_mul (n : Nat_) : zero * n = zero := by
-  induction n with
+theorem _add_assoc : forall (n m k: Nat), n + (m + k) = (n + m) + k := by
+  intro n m k; induction k with 
   | zero => rfl
-  | succ n hyp => 
-    rw [mul_succ]
-    rw [hyp]
-    rfl
+  | succ k ih_k =>
+      rw [_add_succ]
+      rw [_add_succ]
+      rw [ih_k]
+      rfl
 
-theorem succ_mul (m n : Nat_) : (succ m) * n = n + m * n := by
-  induction n with
-  | zero => rfl
-  | succ n hyp =>
-    rw [mul_succ]
-    rw [hyp]
-    rw [mul_succ]
-    rw [succ_add]
-    rw [succ_add]
-    rw [←add_assoc]
-    rw [←add_assoc]
-    simp
-    
+theorem _assoc_flip : forall (n m k: Nat), n + (m + k) = m + (n + k) := by
+  intro n m k 
+  rw [_add_assoc]
+  rw [_add_assoc]
+  rw [_add_comm n m]
 
-theorem mul_comm (m n : Nat_) : m * n = n * m := by
-  induction m with
-  | zero => 
-    rw [zero_mul]
-    rfl
-  | succ m hyp => 
-    rw [mul_succ]
-    rw [succ_mul]
-    rw [hyp]
+theorem _mul_zero : forall (n: Nat), n * 0 = 0 := by
+  intro n; rfl
+
+theorem _mul_succ : forall (n m: Nat), n * (succ m) = n * m + n := by
+  intro n m; rfl
+
+theorem _zero_mul : forall (n: Nat), 0 * n = 0 := by
+  intro n; induction n with 
+  | zero => rfl 
+  | succ n ih_n =>
+      rw [_mul_succ]
+      rw [ih_n]
+
+theorem succ_mul : forall (n m: Nat), (succ n) * m = m + n * m := by
+  intro n m; induction m with 
+  | zero => rfl 
+  | succ m ih_m =>
+      rw [_mul_succ]
+      rw [ih_m]
+      rw [_add_succ]
+      rw [_succ_add]
+      rw [_mul_succ]
+      rw [_add_assoc]
