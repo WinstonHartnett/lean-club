@@ -89,7 +89,7 @@ theorem _zero_mul : forall (n: Nat), 0 * n = 0 := by
       rw [_mul_succ]
       rw [ih_n]
 
-theorem succ_mul : forall (n m: Nat), (succ n) * m = m + n * m := by
+theorem _succ_mul : forall (n m: Nat), (succ n) * m = m + n * m := by
   intro n m; induction m with 
   | zero => rfl 
   | succ m ih_m =>
@@ -99,3 +99,37 @@ theorem succ_mul : forall (n m: Nat), (succ n) * m = m + n * m := by
       rw [_succ_add]
       rw [_mul_succ]
       rw [_add_assoc]
+
+theorem _mul_comm : forall (n m: Nat), n * m = m * n := by
+  intro n m; induction n with
+  | zero =>
+      rw [_zero_mul]
+      rfl
+  | succ n ih_n =>
+      rw [_succ_mul, _mul_succ]
+      rw [ih_n]
+      rw [_add_comm]
+
+theorem _right_distr : forall (n m k: Nat), (n + m) * k = n * k + m * k := by
+  intro n m k; induction k with 
+  | zero => rfl 
+  | succ k ih_k =>
+      rw [_mul_succ, _mul_succ, _mul_succ]
+      rw [ih_k]
+      rw [<- _add_assoc]
+      rw [_assoc_flip (m*k)]
+      rw [_add_assoc]
+
+theorem _left_distr : forall (n m k: Nat), n * (m + k) = n * m + n * k := by
+  intro n m k
+  rw [_mul_comm]
+  rw [_right_distr]
+  rw [_mul_comm, _mul_comm k]
+
+theorem _mul_assoc : forall (n m k: Nat), n * (m * k) = (n * m) * k := by
+  intro n m k; induction k with
+  | zero => rfl 
+  | succ k ih_k => 
+      rw [_mul_succ, _mul_succ]
+      rw [_left_distr]
+      rw [ih_k]
