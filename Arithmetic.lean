@@ -22,12 +22,6 @@ namespace defs
     | succ n => add (mul m n) n
 end defs
 
-theorem succ_not_zero : forall (n: Nat), succ n = 0 -> false := by
-  intros n hyp
-  injection hyp /- the injection tactic exploits the fact that
-    constructors of an inductive type are injective,
-    so succ n = 0 immediately solves any goal. -/
-
 theorem _add_zero : forall (n: Nat), n + 0 = n := by
   intro n; rfl
 
@@ -133,3 +127,9 @@ theorem _mul_assoc : forall (n m k: Nat), n * (m * k) = (n * m) * k := by
       rw [_mul_succ, _mul_succ]
       rw [_left_distr]
       rw [ih_k]
+
+theorem succ_not_zero : forall (n: Nat), succ n = 0 -> false := by
+  intros n hyp
+  injection hyp /- the injection tactic exploits the fact that
+    constructors of an inductive type are injective,
+    so succ n = 0 immediately solves any goal. -/
