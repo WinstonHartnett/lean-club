@@ -4,8 +4,10 @@ open Nat
 
 def divides (d n: Nat) : Prop :=
   exists (k: Nat), d * k = n
--- def divides_type (m n: Nat) : Σ (k: Nat), (m * k = n) :=
---   sorry
+
+-- def divs (d n k: Nat) : Prop := d * k = n
+
+-- def div_type (d n: Nat) := Σ Nat (divs d n)
 
 infix:101 " | " => divides
 
@@ -32,3 +34,17 @@ theorem one_divides_all : forall n, 1 | n := by
         rw [mul_succ]
         rw [ih_n]
   exact (Exists.intro n h)
+
+theorem div_refl : forall n, n | n := by
+  intro n
+  have h: n * 1 = n := by simp
+  exact (Exists.intro 1 h)
+
+theorem div_trans : forall d n m, d | n -> n | m -> d | m := by
+  intro d n m h1 h2
+  cases h1 with
+  | intro w1 h1 => cases h2 with
+    | intro w2 h2 =>
+      apply Exists.intro (w1 * w2)
+      rw [<-Nat.mul_assoc]
+      rw [h1]; assumption
