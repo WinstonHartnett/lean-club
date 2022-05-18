@@ -16,11 +16,7 @@ namespace defs
     | zero   => m
     | succ n => succ (add m n)
 
-  def mul (m n : Nat) : Nat :=
-    match n with
-    | zero   => zero
-    | succ n => add (mul m n) n
-end defs
+theorem add_succ (m n : Nat_) : m + succ n = succ (m + n) := rfl
 
 theorem _add_zero : forall (n: Nat), n + 0 = n := by
   intro n; rfl
