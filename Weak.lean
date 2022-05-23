@@ -1,35 +1,35 @@
 
-def Weak : Prop -> Prop :=
+def DNot : Prop -> Prop :=
   fun A => Not (Not A)
 
-theorem weak_lem : (A : Prop) -> Weak (Or A (Not A)) := by
-  intros A not_AvnA
-  apply not_AvnA
+theorem weak_lem : (A : Prop) -> DNot (Or A (Not A)) := by
+  intro A not_lem
+  apply not_lem
   apply Or.inr
   intro a
-  apply not_AvnA
+  apply not_lem
   apply Or.inl
   exact a
 
-theorem weak_dne : (A : Prop) -> Weak (Weak A -> A) := by
-  intros A nwAtA
-  apply nwAtA
-  intro wA
+theorem weak_dne : (A : Prop) -> DNot (DNot A -> A) := by
+  intro A not_dne
+  apply not_dne
+  intro not_not_A
   apply False.elim
-  apply wA
+  apply not_not_A
   intro a
-  apply nwAtA
-  intro wA2
+  apply not_dne
+  intro ignore
   exact a
 
 open Classical
 theorem strong_lem : (A : Prop) -> (Or A (Not A)) := em
 
-theorem strong_dne : (A : Prop) -> Weak A -> A := by
-  intros A wA
+theorem strong_dne : (A : Prop) -> DNot A -> A := by
+  intro A not_not_A
   cases em A with
   | inl a => exact a
-  | inr nA =>
+  | inr not_A =>
     apply False.elim
-    exact wA nA
+    exact not_not_A not_A
 
