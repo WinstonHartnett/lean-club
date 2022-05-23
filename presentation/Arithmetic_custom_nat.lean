@@ -95,10 +95,8 @@ theorem succ_mul (m n : Nat_) : (succ m) * n = n + m * n := by
     rw [mul_succ]
     rw [hyp]
     rw [mul_succ]
-    rw [succ_add]
-    rw [succ_add]
-    rw [←add_assoc]
-    rw [←add_assoc]
+    repeat (rw [succ_add])
+    repeat (rw [←add_assoc])
     simp
     
 
@@ -118,13 +116,14 @@ theorem distr_r (l m n : Nat_) : (l + m) * n = l * n + m * n := by
     repeat (rw [mul_zero])
     rfl
   | succ n hyp =>
-    repeat (rw [mul_succ])
-    rw [hyp]
-    rw [add_assoc l (l*n) _]
-    rw [add_comm (l*n) (m + m * n)]
-    rw [add_assoc m (m*n) _]
-    rw [add_comm (m * n) (l * n)]
-    rw [←add_assoc l m _]
+    calc 
+      (l + m) * succ n = (l + m) + (l + m) * n := by rw [mul_succ]
+      _ = ((l + m) * n + l) + m                := by rw [add_comm]; rw[add_assoc]
+      _ = (l + (l + m) * n ) + m               := by rw [add_comm _ ((l + m) * n)]
+      _ = (l + l * n + m * n) + m              := by rw [hyp]; rw [add_assoc _ (l*n)]
+      _ = l * (succ n) + m * n + m             := by rw [mul_succ]
+      _ = l * (succ n) + (m * n + m)           := by rw [add_assoc]
+      _ = l * (succ n) + m * (succ n)          := by rw [add_comm (m*n) m]; rw [←mul_succ]
 
 theorem distr_l (l m n : Nat_) : l * (m + n) = l * m + l * n := by
   rw [mul_comm]
