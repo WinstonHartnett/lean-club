@@ -154,4 +154,6 @@ theorem mul_assoc (l m n : Nat_) : (l * m) * n = l * (m * n) := by
 -- PRESENT
 theorem succ_neq_zero (n: Nat_) : succ n = zero -> false := by
     intro hyp
-    injection hyp
+    injection hyp /- the injection tactic exploits the fact that
+    constructors of an inductive type are injective,
+    so succ n = 0 immediately solves any goal. -/
