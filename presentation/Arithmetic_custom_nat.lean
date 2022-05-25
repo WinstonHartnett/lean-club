@@ -66,6 +66,7 @@ theorem add_comm (m n : Nat_) : m + n = n + m := by
     simp
     rw [hyp]
     
+-- PRESENTATION
 theorem add_assoc (l m n : Nat_) : (l + m) + n = l + (m + n) := by
   induction n with
   | zero => 
@@ -92,6 +93,7 @@ theorem zero_mul (n : Nat_) : zero * n = zero := by
     rw [hyp]
     rfl
 
+-- PRESENTATION
 theorem succ_mul (m n : Nat_) : (succ m) * n = n + m * n := by
   induction n with
   | zero => rfl
@@ -100,7 +102,9 @@ theorem succ_mul (m n : Nat_) : (succ m) * n = n + m * n := by
     rw [hyp]
     rw [mul_succ]
     repeat (rw [succ_add])
-    repeat (rw [←add_assoc])
+    -- repeat (rw [←add_assoc])
+    rw [←add_assoc]
+    rw [←add_assoc]
     rw [add_comm m _]
     
 
@@ -114,6 +118,7 @@ theorem mul_comm (m n : Nat_) : m * n = n * m := by
     rw [succ_mul]
     rw [hyp]
   
+-- PRESENTATION
 theorem distr_r (l m n : Nat_) : (l + m) * n = l * n + m * n := by
   induction n with
   | zero => 
@@ -146,6 +151,7 @@ theorem mul_assoc (l m n : Nat_) : (l * m) * n = l * (m * n) := by
     rw [distr_l]
     rw [hyp]
 
+-- PRESENT
 theorem succ_neq_zero (n: Nat_) : succ n = zero -> false := by
     intro hyp
     injection hyp
