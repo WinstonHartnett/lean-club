@@ -11,9 +11,11 @@ def add (m n : Nat_) : Nat_ :=
   | zero => m
   | succ n => succ (add m n)
 
--- #eval add (succ (succ zero)) (succ zero)
+
 instance : Add Nat_ where
   add := add
+
+#eval (succ (succ zero)) + (succ zero)
 
 def multiply (m n : Nat_) : Nat_ :=
   match n with
@@ -67,11 +69,10 @@ theorem add_comm (m n : Nat_) : m + n = n + m := by
 theorem add_assoc (l m n : Nat_) : (l + m) + n = l + (m + n) := by
   induction n with
   | zero => 
-    -- repeat (rw [add_zero])
-    simp
+    rfl
   | succ n hyp => 
-    -- repeat (rw [add_succ])
-    simp
+    repeat (rw [add_succ])
+    -- simp
     rw [hyp]
 
 theorem add_assoc_flip (l m n : Nat_) : l + (m + n) = m + (l + n) := by
