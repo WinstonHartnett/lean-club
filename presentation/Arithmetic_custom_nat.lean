@@ -32,10 +32,13 @@ end Nat_
 
 open Nat_
 
+@[simp]
 theorem add_zero (m : Nat_) : m + zero = m := rfl
 
+@[simp]
 theorem add_succ (m n : Nat_) : m + succ n = succ (m + n) := rfl
 
+@[simp]
 theorem zero_add (m : Nat_) : zero + m = m := by
   induction m with
   | zero => rfl
@@ -43,6 +46,7 @@ theorem zero_add (m : Nat_) : zero + m = m := by
     rw [add_succ]
     rw [hyp]
 
+@[simp]
 theorem succ_add (m n : Nat_) : succ m + n = succ (m + n) := by
   induction n with
   | zero => 
@@ -52,23 +56,22 @@ theorem succ_add (m n : Nat_) : succ m + n = succ (m + n) := by
     rw [hyp]
     rw [←add_succ]
 
-@[simp]
 theorem add_comm (m n : Nat_) : m + n = n + m := by
   induction n with
   | zero => 
-    rw [zero_add]
-    rfl
+    simp
   | succ n hyp =>
-    rw [succ_add]
-    rw [add_succ] 
+    simp
     rw [hyp]
     
 theorem add_assoc (l m n : Nat_) : (l + m) + n = l + (m + n) := by
   induction n with
   | zero => 
-    repeat (rw [add_zero])
+    -- repeat (rw [add_zero])
+    simp
   | succ n hyp => 
-    repeat (rw [add_succ])
+    -- repeat (rw [add_succ])
+    simp
     rw [hyp]
 
 theorem add_assoc_flip (l m n : Nat_) : l + (m + n) = m + (l + n) := by
@@ -97,7 +100,7 @@ theorem succ_mul (m n : Nat_) : (succ m) * n = n + m * n := by
     rw [mul_succ]
     repeat (rw [succ_add])
     repeat (rw [←add_assoc])
-    simp
+    rw [add_comm m _]
     
 
 theorem mul_comm (m n : Nat_) : m * n = n * m := by
